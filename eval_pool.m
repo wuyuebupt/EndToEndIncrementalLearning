@@ -1,4 +1,4 @@
-function outputs = eval_pool(net, imdb)
+function outputs = eval_pool(net, imdb, pos)
 
 if strcmp(net.device, 'cpu')
     net.move('gpu');
@@ -10,7 +10,7 @@ outputs = [];
 train = [] ;
 if isempty(train), train = find(imdb.images.set==1) ; end
 
-train = train(1,1:2000);
+train = train(pos);
 
 meta = net.meta;
 opts.numFetchThreads = 12 ;
