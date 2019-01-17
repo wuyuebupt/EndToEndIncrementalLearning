@@ -1,8 +1,13 @@
-imdbs_dir = '/home/GAIT_local/SSD/cifar100_incremental/'; % Edit me!
-nets_dir = '/home/GAIT/experimentsInria/cifar100/'; % Edit me!
-sufix = '-Herding-0-2000'; % Edit me!
+% imdbs_dir = '/home/GAIT_local/SSD/cifar100_incremental/'; % Edit me!
+% nets_dir = '/home/GAIT/experimentsInria/cifar100/'; % Edit me!
+% sufix = '-Herding-0-2000'; % Edit me!
 
-batchs = [20]; % Edit me!
+imdbs_dir = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/imdb';% Edit me!
+nets_dir = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/model';  % Edit me!
+% sufix = '-Herding-0-2000'; % Edit me!
+sufix = '-Herding-000-2000'; % Edit me!
+% batchs = [10]; % Edit me!
+batchs = [10]; % Edit me!
 nIters = 1; % Edit me!
 
 if ~exist('gpuId', 'var')
@@ -12,9 +17,12 @@ end
 for nbatch_idx=1:length(batchs)
     nblocks = 100 / batchs(nbatch_idx);
     for niter_idx=1:nIters
-        for nblock_idx=1:nblocks
+%         for nblock_idx=1:nblocks
+%         for nblock_idx=2:nblocks
+%         for nblock_idx=3:nblocks
+        for nblock_idx=2
             if nblock_idx == 1
-		% Initial network.
+                % Initial network.
                 net_pattern = sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d', batchs(nbatch_idx), nblock_idx, niter_idx);
                 results_path = fullfile(nets_dir, sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-V4', batchs(nbatch_idx), nblock_idx, niter_idx), 'results');
                 net_name = 'net-epoch-100.mat';

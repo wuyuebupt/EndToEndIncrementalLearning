@@ -1,11 +1,11 @@
-% imdbs_dir = '/home/GAIT_local/SSD/cifar100_incremental/'; % Edit me!
-% nets_dir = '/home/GAIT/experimentsInria/cifar100/'; % Edit me!
+% imdbs_dir = '/home/GAIT_local/SSD/imagenet100_incremental/'; % Edit me!
+% nets_dir = '/home/GAIT/experimentsInria/imagenet100/'; % Edit me!
 
-imdbs_dir = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/imdb';
-nets_dir = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/model'; % Edit me!
+imdbs_dir = '/local1/incremental_cvpr2018/faceNew/eeil/imagenetMatlab/imdb';
+nets_dir = '/local1/incremental_cvpr2018/faceNew/eeil/imagenetMatlab/model'; % Edit me!
 
 
-batchs = 10; % Number of classes per incremental step. Accepts array of sizes. Edit me!
+batchs = 100; % Number of classes per incremental step. Accepts array of sizes. Edit me!
 nIters = 1; % Number of iterations with different class order. Edit me!
 
 if ~exist('gpuId', 'var')
@@ -16,8 +16,8 @@ end
 opts.distillation_temp = 2; % Distillation temperature. Always 2.
 
 % for training details
-% expDir = '/home/GAIT/experimentsInria/cifar100/' ; % Out path. Edit me!
-expDir = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/model' ; % Out path. Edit me! %% should be the same with nets_dir
+% expDir = '/home/GAIT/experimentsInria/imagenet100/' ; % Out path. Edit me!
+expDir = '/local1/incremental_cvpr2018/faceNew/eeil/imagenetMatlab/model' ; % Out path. Edit me! %% should be the same with nets_dir
 opts.train.batchSize = 128;
 opts.train.numSubBatches = 1 ;
 opts.train.continue = true ;
@@ -32,21 +32,21 @@ opts.nExemplarsClass = 0;
 % Kind of selection: 0 random.
 opts.kindSelection = 7;
 % Max number of exemplars. It ignores opts.nExemplarsClass.
-opts.maxExemplars = 2000; % Value of ICARL.
+opts.maxExemplars = 20000; % Value of ICARL.
 % For the output name.
 fix = sprintf('Herding-%03d-%03d', opts.nExemplarsClass, opts.maxExemplars);
 
 for nbatch_idx=1:length(batchs)
-    nblocks = 100 / batchs(nbatch_idx);
+    nblocks = 1000 / batchs(nbatch_idx);
     for niter_idx=1:nIters
         for nblock_idx=2:nblocks
-            outpath = fullfile(expDir, sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix), 'net-final.mat');
+            outpath = fullfile(expDir, sprintf('imagenet-resnet-18-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix), 'net-final.mat');
             if ~exist(outpath, 'file')
                 if nblock_idx == 2
                     % Load initial network.
-                    net_pattern = sprintf('cifar-resnet-32-batch%02d-block01-iter%02d', batchs(nbatch_idx), niter_idx);
-                    net_name = 'net-epoch-100.mat';
-                    imdb_pattern = sprintf('cifar-100-%02d-%02d-%02d.mat', batchs(nbatch_idx), nblock_idx-1, niter_idx);
+                    net_pattern = sprintf('imagenet-resnet-18-batch%02d-block01-iter%02d', batchs(nbatch_idx), niter_idx);
+                    net_name = 'net-epoch-110.mat';
+                    imdb_pattern = sprintf('imagenet-1000-%02d-%02d-%02d.mat', batchs(nbatch_idx), nblock_idx-1, niter_idx);
                     
                     % Load imdb.
                     imdbPath = fullfile(imdbs_dir, imdb_pattern);
@@ -54,7 +54,8 @@ for nbatch_idx=1:length(batchs)
                     exemplars = exemplars.imdb;
                     
                     if ~isfield(exemplars.images, 'labels')
-                        exemplars.images.labels = exemplars.images.classes;
+                        % exemplars.images.labels = exemplars.images.classes;
+                        exemplars.images.labels = exemplars.images.label;
                     end
                     
                     % Load net.
@@ -68,10 +69,10 @@ for nbatch_idx=1:length(batchs)
                     opts.totalClasses = batchs(nbatch_idx);
                     exemplars = build_exemplars_set([], exemplars, opts);
                 else
-                    net_pattern = sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx-1, niter_idx, fix);
+                    net_pattern = sprintf('imagenet-resnet-18-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx-1, niter_idx, fix);
                     net_name = 'net-final.mat';
                 end
-                imdb_pattern = sprintf('cifar-100-%02d-%02d-%02d.mat', batchs(nbatch_idx), nblock_idx, niter_idx);
+                imdb_pattern = sprintf('imagenet-1000-%02d-%02d-%02d.mat', batchs(nbatch_idx), nblock_idx, niter_idx);
                 
                 opts.newtaskdim = batchs(nbatch_idx);
                 
@@ -85,16 +86,16 @@ for nbatch_idx=1:length(batchs)
                 load(imdbPath);
                 
                 % Train.
-                if ~exist(fullfile(expDir, sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix)), 'dir')
-                    mkdir(fullfile(expDir, sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix)));
+                if ~exist(fullfile(expDir, sprintf('imagenet-resnet-18-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix)), 'dir')
+                    mkdir(fullfile(expDir, sprintf('imagenet-resnet-18-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix)));
                 end
-                opts.train.expDir = fullfile(expDir, sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix));
+                opts.train.expDir = fullfile(expDir, sprintf('imagenet-resnet-18-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix));
                 exemplars_ = exemplars;
                 [net, info, meta, exemplars] = incremental_training(net, imdb, exemplars, opts);
                 
                 % Save model.
                 disp('Saving model...');
-                outpath = fullfile(expDir, sprintf('cifar-resnet-32-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix), 'net-final.mat');
+                outpath = fullfile(expDir, sprintf('imagenet-resnet-18-batch%02d-block%02d-iter%02d-%s', batchs(nbatch_idx), nblock_idx, niter_idx, fix), 'net-final.mat');
                 save(outpath, 'net', 'info', 'meta', 'exemplars');      
             else
                 fprintf('%s already exists. \n', outpath)

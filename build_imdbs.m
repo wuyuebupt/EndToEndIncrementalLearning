@@ -4,11 +4,15 @@
 max_iters = 5;
 nclasses = 100;
 batch_sizes = [2 5 10 20 50];
-imdb_path = '/home/GAIT_local/Datasets/cifar-100-matlab/train.mat'; % Edit me!
-imdbtest_path = '/home/GAIT_local/Datasets/cifar-100-matlab/test.mat'; % Edit me!
-metadata = '/home/GAIT_local/Datasets/cifar-100-matlab/meta.mat'; % Edit me!
-outdir = '/home/GAIT/SSD/cifar100_incremental'; % Edit me!
+% imdb_path = '/home/GAIT_local/Datasets/cifar-100-matlab/train.mat'; % Edit me!
+% imdbtest_path = '/home/GAIT_local/Datasets/cifar-100-matlab/test.mat'; % Edit me!
+% metadata = '/home/GAIT_local/Datasets/cifar-100-matlab/meta.mat'; % Edit me!
+% outdir = '/home/GAIT/SSD/cifar100_incremental'; % Edit me!
 
+imdb_path = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/data/cifar-100-matlab/train.mat'; % Edit me!
+imdbtest_path = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/data/cifar-100-matlab/test.mat'; % Edit me!
+metadata = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/data/cifar-100-matlab/meta.mat'; % Edit me!
+outdir = '/local1/incremental_cvpr2018/faceNew/eeil/cifarMatlab/imdb/'; % Edit me!
 %% Build base imdb
 train = load(imdb_path);
 test = load(imdbtest_path);

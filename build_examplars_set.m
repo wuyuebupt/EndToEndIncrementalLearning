@@ -1,4 +1,4 @@
-function imdbExemplars_ = build_exemplars_set(lastExemplars, imdb, opts)
+function imdbExemplars_ = build_examplars_set(lastExemplars, imdb, opts)
 
 % New number of exemplars.
 if opts.maxExemplars ~= 0
@@ -32,8 +32,6 @@ for i = 1:length(ulabs)
     [positions, cluster] = selectPositions(imdb, ulabs(i), 1, opts);
     nExemplars_ = min(length(positions), nExemplars);
     imdbExemplars.images.data = cat(4, imdbExemplars.images.data, imdb.images.data(:,:,:,positions(1:nExemplars_)));
-    
-    
     imdbExemplars.images.labels = cat(2, imdbExemplars.images.labels, imdb.images.labels(positions(1:nExemplars_)));
     imdbExemplars.images.classes = cat(2, imdbExemplars.images.classes, imdb.images.classes(positions(1:nExemplars_)));
     if isfield(imdbExemplars.images, 'coarseLabels')

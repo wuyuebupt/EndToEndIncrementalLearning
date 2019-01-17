@@ -82,7 +82,7 @@ if start >= 1
 end
 
 for epoch=start+1:opts.numEpochs
-    
+    tic;
     % Set the random seed based on the epoch and opts.randomSeed.
     % This is important for reproducibility, including when training
     % is restarted from a checkpoint.
@@ -161,7 +161,7 @@ for epoch=start+1:opts.numEpochs
     if ~isempty(opts.checkpointFn),
         opts.checkpointFn();
     end
-    
+    toc;
 end
 
 % -------------------------------------------------------------------------

@@ -11,7 +11,7 @@ opts.mode = 'multiclass'; % type of last layer of the new path
 opts.keep_response_loss = 'MI'; % MI for mutual information, L1 for L1-norm. only works when orig_loss is 'for_keep'.
 opts.origstyle = 'multiclass';
 derOutputs = opts.derOutputs;
-
+opts.orig_loss= 'for_keep';
 %% Update loss layer for the old layer. Only the "last new" task is updated.
 if strcmp(opts.orig_loss, 'for_keep')
     switch opts.mode
