@@ -69,7 +69,7 @@ for i = 1:length(ulabs)
 end
 
 % Keep all test exemplars.
-positions = find(imdb.images.set == 2);
+ positions = find(imdb.images.set == 2);
 % positions = find(imdb.images.set == 3);
 % imdbExemplars.images.data = cat(4, imdbExemplars.images.data, imdb.images.data(:,:,:,positions));
 % imdbExemplars.images.labels = cat(2, imdbExemplars.images.labels, imdb.images.labels(positions));
@@ -198,11 +198,11 @@ perm = randperm(size(imdbExemplars.images.name, 2));
 % imdbExemplars_.images.labels = imdbExemplars.images.labels(perm);
 % imdbExemplars_.images.classes = imdbExemplars.images.classes(perm);
 
-              imdbExemplars.images.id = cat(4, imdbExemplars.images.id, imdb.images.id(perm));
-              imdbExemplars.images.name = cat(4, imdbExemplars.images.name, imdb.images.name(perm));
-              imdbExemplars.images.labels = cat(4, imdbExemplars.images.labels, imdb.images.labels(perm));
-              imdbExemplars.images.set = cat(4, imdbExemplars.images.set, imdb.images.set(perm));
-              imdbExemplars.images.label = cat(4, imdbExemplars.images.label, imdb.images.label(perm));
+              imdbExemplars_.images.id = cat(4, imdbExemplars.images.id, imdb.images.id(perm));
+              imdbExemplars_.images.name = cat(4, imdbExemplars.images.name, imdb.images.name(perm));
+              imdbExemplars_.images.labels = cat(4, imdbExemplars.images.labels, imdb.images.labels(perm));
+              imdbExemplars_.images.set = cat(4, imdbExemplars.images.set, imdb.images.set(perm));
+              imdbExemplars_.images.label = cat(4, imdbExemplars.images.label, imdb.images.label(perm));
               
 % if isfield(imdbExemplars.images, 'coarseLabels')
 %     imdbExemplars_.images.coarseLabels = imdbExemplars.images.coarseLabels(perm);
