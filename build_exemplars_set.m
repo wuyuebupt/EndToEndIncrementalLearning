@@ -56,16 +56,16 @@ for i = 1:length(ulabs)
 %         imdbExemplars.images.coarseLabels = cat(2, imdbExemplars.images.coarseLabels, imdb.images.coarseLabels(positions(1:nExemplars_)));
 %     end
 %     imdbExemplars.images.set = cat(2, imdbExemplars.images.set, imdb.images.set(positions(1:nExemplars_)));
-    if ~isempty(cluster)
-        if ~isfield(imdbExemplars.meta, 'clusters')
-            imdbExemplars.meta.clusters = cluster(1:nExemplars_);
-        else
-            imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, cluster(1:nExemplars_));
-        end
-    end
-    if isfield(imdb.images, 'labels_clust')
-        imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, imdb.images.labels_clust(positions(1:nExemplars_)));
-    end
+%     if ~isempty(cluster)
+%         if ~isfield(imdbExemplars.meta, 'clusters')
+%             imdbExemplars.meta.clusters = cluster(1:nExemplars_);
+%         else
+%             imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, cluster(1:nExemplars_));
+%         end
+%     end
+%     if isfield(imdb.images, 'labels_clust')
+%         imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, imdb.images.labels_clust(positions(1:nExemplars_)));
+%     end
 end
 
 % Keep all test exemplars.
@@ -191,7 +191,9 @@ if ~isempty(lastExemplars)
 end
 
 % Randomize everything.
-perm = randperm(size(imdbExemplars.images.data, 4));
+% perm = randperm(size(imdbExemplars.images.data, 4));
+perm = randperm(size(imdbExemplars.images.name, 2));
+
 % imdbExemplars_.images.data = imdbExemplars.images.data(:,:,:,perm);
 % imdbExemplars_.images.labels = imdbExemplars.images.labels(perm);
 % imdbExemplars_.images.classes = imdbExemplars.images.classes(perm);
