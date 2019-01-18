@@ -85,12 +85,13 @@ imdbExemplars.images.label = cat(4, imdbExemplars.images.label, imdb.images.labe
 %     imdbExemplars.images.coarseLabels = cat(2, imdbExemplars.images.coarseLabels, imdb.images.coarseLabels(positions));
 % end
 % imdbExemplars.images.set = cat(2, imdbExemplars.images.set, imdb.images.set(positions));
-if isfield(imdbExemplars.meta, 'clusters')
-    imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, zeros(1, length(positions))-1); % Test images don't have cluster.
-end
-if isfield(imdbExemplars.images, 'labels_clust')
-    imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, imdb.images.labels_clust(positions));
-end
+
+% if isfield(imdbExemplars.meta, 'clusters')
+%     imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, zeros(1, length(positions))-1); % Test images don't have cluster.
+% end
+% if isfield(imdbExemplars.images, 'labels_clust')
+%     imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, imdb.images.labels_clust(positions));
+% end
 
 % Concat previous exemplars.
 if ~isempty(lastExemplars)
@@ -118,17 +119,20 @@ if ~isempty(lastExemplars)
 %             end
 %             imdbExemplars.images.set = cat(2, imdbExemplars.images.set, lastExemplars.images.set(positions(1:nExemplars_)));
             
-            if ~isempty(cluster)
-                if ~isfield(imdbExemplars.meta, 'clusters')
-                    imdbExemplars.meta.clusters = cluster(1:nExemplars_);
-                else
-                    imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, cluster(1:nExemplars_));
-                end
-            end
-            
-            if isfield(imdbExemplars.images, 'labels_clust')
-                imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, lastExemplars.images.labels_clust(positions(1:nExemplars_)));
-            end
+
+%             if ~isempty(cluster)
+%                 if ~isfield(imdbExemplars.meta, 'clusters')
+%                     imdbExemplars.meta.clusters = cluster(1:nExemplars_);
+%                 else
+%                     imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, cluster(1:nExemplars_));
+%                 end
+%             end
+%             
+%             if isfield(imdbExemplars.images, 'labels_clust')
+%                 imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, lastExemplars.images.labels_clust(positions(1:nExemplars_)));
+%             end
+
+
         end
     else
         positions = find(lastExemplars.images.set == 1);
@@ -144,12 +148,16 @@ if ~isempty(lastExemplars)
 %             imdbExemplars.images.coarseLabels = cat(2, imdbExemplars.images.coarseLabels, lastExemplars.images.coarseLabels(positions));
 %         end
 %         imdbExemplars.images.set = cat(2, imdbExemplars.images.set, lastExemplars.images.set(positions));
-        if isfield(imdbExemplars.meta, 'clusters')
-            imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, lastExemplars.meta.clusters(positions));
-        end
-        if isfield(imdbExemplars.images, 'labels_clust')
-            imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, lastExemplars.images.labels_clust(positions));
-        end
+
+
+%         if isfield(imdbExemplars.meta, 'clusters')
+%             imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, lastExemplars.meta.clusters(positions));
+%         end
+%         if isfield(imdbExemplars.images, 'labels_clust')
+%             imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, lastExemplars.images.labels_clust(positions));
+%         end
+        
+        
     end
     
     % Keep all test exemplars.
@@ -168,15 +176,18 @@ if ~isempty(lastExemplars)
               imdbExemplars.images.set = cat(4, imdbExemplars.images.set, imdb.images.set(positions));
               imdbExemplars.images.label = cat(4, imdbExemplars.images.label, imdb.images.label(positions));
               
-    if isfield(imdbExemplars.meta, 'clusters')
-        imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, zeros(1, length(positions))-1); % Test images don't have cluster.
-    end
-    if isfield(imdbExemplars.images, 'labels_clust')
-        imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, lastExemplars.images.labels_clust(positions));
-    end
+%     if isfield(imdbExemplars.meta, 'clusters')
+%         imdbExemplars.meta.clusters = cat(2, imdbExemplars.meta.clusters, zeros(1, length(positions))-1); % Test images don't have cluster.
+%     end
+%     if isfield(imdbExemplars.images, 'labels_clust')
+%         imdbExemplars.images.labels_clust = cat(2, imdbExemplars.images.labels_clust, lastExemplars.images.labels_clust(positions));
+%     end
+    
+
+
     % Concate metadata.
-    imdbExemplars.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
-    imdbExemplars.meta.coarseClasses = cat(2, lastExemplars.meta.coarseClasses, imdb.meta.coarseClasses);
+%     imdbExemplars.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
+%     imdbExemplars.meta.coarseClasses = cat(2, lastExemplars.meta.coarseClasses, imdb.meta.coarseClasses);
 end
 
 % Randomize everything.
@@ -195,13 +206,17 @@ perm = randperm(size(imdbExemplars.images.data, 4));
 %     imdbExemplars_.images.coarseLabels = imdbExemplars.images.coarseLabels(perm);
 % end
 % imdbExemplars_.images.set = imdbExemplars.images.set(perm);
-imdbExemplars_.meta = imdbExemplars.meta;
-if isfield(imdbExemplars.meta, 'clusters')
-    imdbExemplars_.meta.clusters = imdbExemplars.meta.clusters(perm);
-end
-if isfield(imdbExemplars.images, 'labels_clust')
-    imdbExemplars_.images.labels_clust = imdbExemplars.images.labels_clust(perm);
-end
+
+
+% imdbExemplars_.meta = imdbExemplars.meta;
+% if isfield(imdbExemplars.meta, 'clusters')
+%     imdbExemplars_.meta.clusters = imdbExemplars.meta.clusters(perm);
+% end
+% if isfield(imdbExemplars.images, 'labels_clust')
+%     imdbExemplars_.images.labels_clust = imdbExemplars.images.labels_clust(perm);
+% end
+
+
 end
 
 function [positions, cluster] = selectPositions(imdb, label, set, opts)
