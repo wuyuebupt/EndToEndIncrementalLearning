@@ -2,15 +2,53 @@ function outputs = eval_softmax(net, imdb)
 
 if strcmp(net.device, 'cpu')
     net.move('gpu');
+% net = vl_simplenn_move(net,'gpu');
 end
 
+% net = vl_simplenn_move(net,'gpu');
 net.conserveMemory = 0;
 nsamp = 1;
 outputs = {};
-while nsamp <= size(imdb.images.data, 4)
-    step = min(256, size(imdb.images.data, 4) - nsamp+1);
-    images = gpuArray(single(imdb.images.data(:, :, :, nsamp:nsamp+step-1)));
-    inputs = {'image', images};
+
+
+% outputs = [];
+train = [] ;
+if isempty(train), train = find(imdb.images.set==1) ; end
+
+meta = net.meta;
+opts.numFetchThreads = 12 ;
+opts.numAugments = 1 ;
+
+bopts.numThreads = opts.numFetchThreads ;
+bopts.imageSize = meta.normalization.imageSize ;
+bopts.border = meta.normalization.border ;
+bopts.averageImage = meta.normalization.averageImage ;
+bopts.rgbVariance = meta.augmentation.rgbVariance ;
+bopts.transformation = meta.augmentation.transformation ;
+bopts.numAugments = opts.numAugments ; 
+
+
+
+% while nsamp <= size(imdb.images.data, 4)
+while nsamp <= size(train, 2)
+%     step = min(256, size(imdb.images.data, 4) - nsamp+1);\
+
+    step = min(128, size(train, 2) - nsamp+1);
+    fprintf('%d out of %d to forward \n',nsamp, size(train, 2))
+    
+    batch = nsamp:1:nsamp+step-1;
+    
+    images = strcat([imdb.imageDir filesep], imdb.images.name(batch)) ;
+    images = cnn_imagenet_get_batch(images,bopts, ...
+                              'prefetch', nargout == 0, ...
+                              'transformation', 'none') ;
+    images = gpuArray(images) ;   
+    
+                          
+    
+%     images = gpuArray(single(imdb.images.data(:, :, :, nsamp:nsamp+step-1)));
+%     inputs = {'image', images};
+    inputs = {'data', images};
     net.eval(inputs) ;
     nsamp = nsamp + step;
     
