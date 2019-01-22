@@ -30,23 +30,43 @@ end
 % net.meta.eqlabs = cat(2, net.meta.eqlabs, unique(imdb.images.classes)); % Add previous classes.
 
 % Build imdb with new imdb + exemplars.
+if ~isfield(imdb, 'meta')
+    imdb.meta = imdb.images;
+end
 imdb.meta.exemplars = cat(2, ones(1, length(lastExemplars.images.labels)), zeros(1, length(imdb.images.labels)));
-imdb.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
+% imdb.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
 
 
-imdb.images.data = cat(4, lastExemplars.images.data, imdb.images.data);
+% imdb.images.data = cat(4, lastExemplars.images.data, imdb.images.data);
+imdb.images.id = cat(2, lastExemplars.images.id, imdb.images.id);
+imdb.images.name = cat(2, lastExemplars.images.name, imdb.images.name);
 imdb.images.labels = cat(2, lastExemplars.images.labels, imdb.images.labels);
-imdb.images.classes = cat(2, lastExemplars.images.classes, imdb.images.classes);
-imdb.images.coarseLabels = cat(2, lastExemplars.images.coarseLabels, imdb.images.coarseLabels);
 imdb.images.set = cat(2, lastExemplars.images.set, imdb.images.set);
+imdb.images.label = cat(2, lastExemplars.images.label, imdb.images.label);
+
+% imdb.images.labels = cat(2, lastExemplars.images.labels, imdb.images.labels);
+% imdb.images.classes = cat(2, lastExemplars.images.classes, imdb.images.classes);
+% imdb.images.coarseLabels = cat(2, lastExemplars.images.coarseLabels, imdb.images.coarseLabels);
+% imdb.images.set = cat(2, lastExemplars.images.set, imdb.images.set);
+
+
+% imdbExemplars.images.id = cat(2, imdbExemplars.images.id, imdb.images.id(positions));
+% imdbExemplars.images.name = cat(2, imdbExemplars.images.name, imdb.images.name(positions));
+% imdbExemplars.images.labels = cat(2, imdbExemplars.images.labels, imdb.images.labels(positions));
+% imdbExemplars.images.set = cat(2, imdbExemplars.images.set, imdb.images.set(positions));
+% imdbExemplars.images.label = cat(2, imdbExemplars.images.label, imdb.images.label(positions));
+
+
 
 % Data augmentation.
 exemplars_ = imdb;
-exemplars_.images.data = bsxfun(@plus, exemplars_.images.data, imdb.meta.dataMean);
-exemplars_.images.data = exemplars_.images.data * 255;
-sz = size(imdb.images.data);
+% exemplars_.images.data = bsxfun(@plus, exemplars_.images.data, imdb.meta.dataMean);
+% exemplars_.images.data = exemplars_.images.data * 255;
+% sz = size(imdb.images.data);
+sz = size(imdb.images.id);
 posTraining = find(imdb.images.set == 1);
-posTest = find(imdb.images.set == 3);
+% posTest = find(imdb.images.set == 3);
+posTest = find(imdb.images.set == 2);
 newSize = (length(posTraining) * 12) + length(posTest);
 sz(end) = newSize;
 exemplarsFinal = imdb;

@@ -37,108 +37,133 @@ imdb.meta.exemplars = cat(2, ones(1, length(lastExemplars.images.labels)), zeros
 % imdb.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
 
 
-imdb.images.data = cat(4, lastExemplars.images.data, imdb.images.data);
+% imdb.images.data = cat(4, lastExemplars.images.data, imdb.images.data);
+imdb.images.id = cat(2, lastExemplars.images.id, imdb.images.id);
+imdb.images.name = cat(2, lastExemplars.images.name, imdb.images.name);
 imdb.images.labels = cat(2, lastExemplars.images.labels, imdb.images.labels);
-imdb.images.classes = cat(2, lastExemplars.images.classes, imdb.images.classes);
-imdb.images.coarseLabels = cat(2, lastExemplars.images.coarseLabels, imdb.images.coarseLabels);
 imdb.images.set = cat(2, lastExemplars.images.set, imdb.images.set);
+imdb.images.label = cat(2, lastExemplars.images.label, imdb.images.label);
+
+% imdb.images.labels = cat(2, lastExemplars.images.labels, imdb.images.labels);
+% imdb.images.classes = cat(2, lastExemplars.images.classes, imdb.images.classes);
+% imdb.images.coarseLabels = cat(2, lastExemplars.images.coarseLabels, imdb.images.coarseLabels);
+% imdb.images.set = cat(2, lastExemplars.images.set, imdb.images.set);
+
+
+% imdbExemplars.images.id = cat(2, imdbExemplars.images.id, imdb.images.id(positions));
+% imdbExemplars.images.name = cat(2, imdbExemplars.images.name, imdb.images.name(positions));
+% imdbExemplars.images.labels = cat(2, imdbExemplars.images.labels, imdb.images.labels(positions));
+% imdbExemplars.images.set = cat(2, imdbExemplars.images.set, imdb.images.set(positions));
+% imdbExemplars.images.label = cat(2, imdbExemplars.images.label, imdb.images.label(positions));
+
+
 
 % Data augmentation.
 exemplars_ = imdb;
-exemplars_.images.data = bsxfun(@plus, exemplars_.images.data, imdb.meta.dataMean);
-exemplars_.images.data = exemplars_.images.data * 255;
-sz = size(imdb.images.data);
+% exemplars_.images.data = bsxfun(@plus, exemplars_.images.data, imdb.meta.dataMean);
+% exemplars_.images.data = exemplars_.images.data * 255;
+% sz = size(imdb.images.data);
+% sz = size(imdb.images.id);
 posTraining = find(imdb.images.set == 1);
-posTest = find(imdb.images.set == 3);
-newSize = (length(posTraining) * 12) + length(posTest);
-sz(end) = newSize;
+% posTest = find(imdb.images.set == 3);
+posTest = find(imdb.images.set == 2);
+% newSize = (length(posTraining) * 12) + length(posTest);
+% sz(end) = newSize;
 exemplarsFinal = imdb;
-exemplarsFinal.images.data = zeros(sz, class(imdb.images.data));
-exemplarsFinal.images.labels = zeros(1, newSize, class(imdb.images.labels));
-exemplarsFinal.images.classes = zeros(1, newSize, class(imdb.images.classes));
-exemplarsFinal.images.coarseLabels = zeros(1, newSize, class(imdb.images.coarseLabels));
-exemplarsFinal.images.set = zeros(1, newSize, class(imdb.images.set));
-pos = 1;
+
+% 
+% exemplarsFinal.images.data = zeros(sz, class(imdb.images.data));
+% exemplarsFinal.images.labels = zeros(1, newSize, class(imdb.images.labels));
+% exemplarsFinal.images.classes = zeros(1, newSize, class(imdb.images.classes));
+% exemplarsFinal.images.coarseLabels = zeros(1, newSize, class(imdb.images.coarseLabels));
+% exemplarsFinal.images.set = zeros(1, newSize, class(imdb.images.set));
+% pos = 1;
+
+
+
 % Training data with data augmentation.
-for i=1:length(posTraining)
-    szAux = sz;
-    szAux(end) = 12;
-    moreImages = zeros(szAux, class(exemplars_.images.data));
-    moreImages(:,:,:,1) = exemplars_.images.data(:,:,:,posTraining(i));
-    
-    % Brightness.
-    brightness = unifrnd(-63, 63);
-    image = exemplars_.images.data(:,:,:,posTraining(i)) + brightness;
-    image(image > 255) = 255;
-    image(image < 0) = 0;
-    moreImages(:,:,:,2) = image;
-    clear('image');
-    
-    % Contrast.
-    contrast = unifrnd(0.2, 1.8);
-    m1 = mean(mean(exemplars_.images.data(:,:,1,posTraining(i))));
-    m2 = mean(mean(exemplars_.images.data(:,:,2,posTraining(i))));
-    m3 = mean(mean(exemplars_.images.data(:,:,3,posTraining(i))));
-    image2 = exemplars_.images.data(:,:,1,posTraining(i));
-    image2(:,:,1) = (exemplars_.images.data(:,:,1,posTraining(i)) - m1) * contrast + m1;
-    image2(:,:,2) = (exemplars_.images.data(:,:,2,posTraining(i)) - m2) * contrast + m2;
-    image2(:,:,3) = (exemplars_.images.data(:,:,3,posTraining(i)) - m3) * contrast + m3;
-    image2(image2 > 255) = 255;
-    image2(image2 < 0) = 0;
-    moreImages(:,:,:,3) = image2;
-    clear('image2');
-    
-    % Crop.
-    images = moreImages(:,:,:,1:3);
-    augmented = padarray(images,[4 4 0 0],'both');
-    cropsx = randi(8, 1, 3);
-    cropsy = randi(8, 1, 3);
-    for jj=1:size(images, 4)
-        inx = cropsx(jj);
-        enx = inx + size(images, 1) - 1;
-        iny = cropsy(jj);
-        eny = iny + size(images, 2) - 1;
-        images(:,:,:,jj) = augmented(inx:enx, iny:eny, :, jj);
-    end
-    moreImages(:,:,:,4:6) = images;
-    clear('images');
-    
-    % Mirror.
-    moreImages(:,:,:,7:end) = fliplr(moreImages(:,:,:,1:6));
-    
-    % Cat data.
-    exemplarsFinal.images.data(:,:,:,pos:pos+12-1) = moreImages;
-    exemplarsFinal.images.labels(pos:pos+12-1) = exemplars_.images.labels(posTraining(i));
-    exemplarsFinal.images.classes(pos:pos+12-1) = exemplars_.images.classes(posTraining(i));
-    exemplarsFinal.images.coarseLabels(pos:pos+12-1) = exemplars_.images.coarseLabels(posTraining(i));
-    exemplarsFinal.images.set(pos:pos+12-1) = exemplars_.images.set(posTraining(i));
-    pos = pos + 12;
-    clear('moreImages');
-end
+% for i=1:length(posTraining)
+%     szAux = sz;
+%     szAux(end) = 12;
+%     moreImages = zeros(szAux, class(exemplars_.images.data));
+%     moreImages(:,:,:,1) = exemplars_.images.data(:,:,:,posTraining(i));
+%     
+%     % Brightness.
+%     brightness = unifrnd(-63, 63);
+%     image = exemplars_.images.data(:,:,:,posTraining(i)) + brightness;
+%     image(image > 255) = 255;
+%     image(image < 0) = 0;
+%     moreImages(:,:,:,2) = image;
+%     clear('image');
+%     
+%     % Contrast.
+%     contrast = unifrnd(0.2, 1.8);
+%     m1 = mean(mean(exemplars_.images.data(:,:,1,posTraining(i))));
+%     m2 = mean(mean(exemplars_.images.data(:,:,2,posTraining(i))));
+%     m3 = mean(mean(exemplars_.images.data(:,:,3,posTraining(i))));
+%     image2 = exemplars_.images.data(:,:,1,posTraining(i));
+%     image2(:,:,1) = (exemplars_.images.data(:,:,1,posTraining(i)) - m1) * contrast + m1;
+%     image2(:,:,2) = (exemplars_.images.data(:,:,2,posTraining(i)) - m2) * contrast + m2;
+%     image2(:,:,3) = (exemplars_.images.data(:,:,3,posTraining(i)) - m3) * contrast + m3;
+%     image2(image2 > 255) = 255;
+%     image2(image2 < 0) = 0;
+%     moreImages(:,:,:,3) = image2;
+%     clear('image2');
+%     
+%     % Crop.
+%     images = moreImages(:,:,:,1:3);
+%     augmented = padarray(images,[4 4 0 0],'both');
+%     cropsx = randi(8, 1, 3);
+%     cropsy = randi(8, 1, 3);
+%     for jj=1:size(images, 4)
+%         inx = cropsx(jj);
+%         enx = inx + size(images, 1) - 1;
+%         iny = cropsy(jj);
+%         eny = iny + size(images, 2) - 1;
+%         images(:,:,:,jj) = augmented(inx:enx, iny:eny, :, jj);
+%     end
+%     moreImages(:,:,:,4:6) = images;
+%     clear('images');
+%     
+%     % Mirror.
+%     moreImages(:,:,:,7:end) = fliplr(moreImages(:,:,:,1:6));
+%     
+%     % Cat data.
+%     exemplarsFinal.images.data(:,:,:,pos:pos+12-1) = moreImages;
+%     exemplarsFinal.images.labels(pos:pos+12-1) = exemplars_.images.labels(posTraining(i));
+%     exemplarsFinal.images.classes(pos:pos+12-1) = exemplars_.images.classes(posTraining(i));
+%     exemplarsFinal.images.coarseLabels(pos:pos+12-1) = exemplars_.images.coarseLabels(posTraining(i));
+%     exemplarsFinal.images.set(pos:pos+12-1) = exemplars_.images.set(posTraining(i));
+%     pos = pos + 12;
+%     clear('moreImages');
+% end
 
-% Test data.
-exemplarsFinal.images.data(:,:,:,pos:end) = exemplars_.images.data(:,:,:,posTest);
-exemplarsFinal.images.labels(pos:end) = exemplars_.images.labels(posTest);
-exemplarsFinal.images.classes(pos:end) = exemplars_.images.classes(posTest);
-exemplarsFinal.images.coarseLabels(pos:end) = exemplars_.images.coarseLabels(posTest);
-exemplarsFinal.images.set(pos:end) = exemplars_.images.set(posTest);
 
-exemplarsFinal.images.data = exemplarsFinal.images.data / 255.0;
-exemplarsFinal.images.data = bsxfun(@minus, exemplarsFinal.images.data, exemplarsFinal.meta.dataMean);
+%% Test data.
+
+
+% exemplarsFinal.images.data(:,:,:,pos:end) = exemplars_.images.data(:,:,:,posTest);
+% exemplarsFinal.images.labels(pos:end) = exemplars_.images.labels(posTest);
+% exemplarsFinal.images.classes(pos:end) = exemplars_.images.classes(posTest);
+% exemplarsFinal.images.coarseLabels(pos:end) = exemplars_.images.coarseLabels(posTest);
+% exemplarsFinal.images.set(pos:end) = exemplars_.images.set(posTest);
+% 
+% exemplarsFinal.images.data = exemplarsFinal.images.data / 255.0;
+% exemplarsFinal.images.data = bsxfun(@minus, exemplarsFinal.images.data, exemplarsFinal.meta.dataMean);
 clear('exemplars_');
 imdb = exemplarsFinal;
 
-if isvector(imdb.images.labels)
-    ulabs = net.meta.eqlabs;
-    % Set new ones
-    newlabs = zeros(size(imdb.images.labels), class(imdb.images.labels));
-    for i = 1:length(ulabs)
-        idx = imdb.images.labels == ulabs(i);
-        newlabs(idx) = i;
-    end
-    imdb.images.labels = newlabs;
-    fprintf('INFO: reorganized new labels labels!\n');
-end
+% if isvector(imdb.images.labels)
+%     ulabs = net.meta.eqlabs;
+%     % Set new ones
+%     newlabs = zeros(size(imdb.images.labels), class(imdb.images.labels));
+%     for i = 1:length(ulabs)
+%         idx = imdb.images.labels == ulabs(i);
+%         newlabs(idx) = i;
+%     end
+%     imdb.images.labels = newlabs;
+%     fprintf('INFO: reorganized new labels labels!\n');
+% end
 
 % Get FC exemplars outputs.
 outputs = eval_softmax(net, imdb);
