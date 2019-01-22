@@ -20,17 +20,23 @@ end
 imdb_or.images.labels = imdb_or.images.label;
 opts.train.derOutputs = derOutputs;
 
-net.meta.classes.name = cat(2, net.meta.classes.name, unique(imdb.images.classes));
+% net.meta.classes.name = cat(2, net.meta.classes.name, unique(imdb.images.classes));
+% net.meta.classes.name = cat(2, net.meta.classes.name, unique(imdb.classes));
 % Parse labels to fit number of classes
 if ~isfield(net.meta, 'eqlabs')
     net.meta.eqlabs = net.meta.classes.name;
 end
 
-net.meta.eqlabs = cat(2, net.meta.eqlabs, unique(imdb.images.classes)); % Add previous classes.
+% net.meta.eqlabs = cat(2, net.meta.eqlabs, unique(imdb.images.classes)); % Add previous classes.
 
 % Build imdb with new imdb + exemplars.
+if ~isfield(imdb, 'meta')
+    imdb.meta = imdb.images;
+end
 imdb.meta.exemplars = cat(2, ones(1, length(lastExemplars.images.labels)), zeros(1, length(imdb.images.labels)));
-imdb.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
+% imdb.meta.classes = cat(2, lastExemplars.meta.classes, imdb.meta.classes);
+
+
 imdb.images.data = cat(4, lastExemplars.images.data, imdb.images.data);
 imdb.images.labels = cat(2, lastExemplars.images.labels, imdb.images.labels);
 imdb.images.classes = cat(2, lastExemplars.images.classes, imdb.images.classes);
