@@ -4,7 +4,7 @@ if strcmp(net.device, 'cpu')
     net.move('gpu');
 end
 
-net.conserveMemory = 0;
+% net.conserveMemory = 0;
 nsamp = 1;
 outputs = [];
 train = [] ;

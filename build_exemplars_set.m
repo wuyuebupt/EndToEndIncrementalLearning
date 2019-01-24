@@ -192,17 +192,29 @@ end
 
 % Randomize everything.
 % perm = randperm(size(imdbExemplars.images.data, 4));
-perm = randperm(size(imdbExemplars.images.name, 2));
+% perm = randperm(size(imdbExemplars.images.name, 2));
 
 % imdbExemplars_.images.data = imdbExemplars.images.data(:,:,:,perm);
 % imdbExemplars_.images.labels = imdbExemplars.images.labels(perm);
 % imdbExemplars_.images.classes = imdbExemplars.images.classes(perm);
 
-              imdbExemplars_.images.id = imdbExemplars.images.id(perm);
-              imdbExemplars_.images.name = imdbExemplars.images.name(perm);
-              imdbExemplars_.images.labels = imdbExemplars.images.labels(perm);
-              imdbExemplars_.images.set = imdbExemplars.images.set(perm);
-              imdbExemplars_.images.label = imdbExemplars.images.label(perm);
+
+% perm = randperm(size(imdbExemplars.images.name, 2));       
+%                 imdbExemplars_.images.id = imdbExemplars.images.id(perm);
+%               imdbExemplars_.images.name = imdbExemplars.images.name(perm);
+%               imdbExemplars_.images.labels = imdbExemplars.images.labels(perm);
+%               imdbExemplars_.images.set = imdbExemplars.images.set(perm);
+%               imdbExemplars_.images.label = imdbExemplars.images.label(perm);
+              
+
+%               
+% 
+              imdbExemplars_.images.id = imdbExemplars.images.id;
+              imdbExemplars_.images.name = imdbExemplars.images.name;
+              imdbExemplars_.images.labels = imdbExemplars.images.labels;
+              imdbExemplars_.images.set = imdbExemplars.images.set;
+              imdbExemplars_.images.label = imdbExemplars.images.label;
+              
               
 % if isfield(imdbExemplars.images, 'coarseLabels')
 %     imdbExemplars_.images.coarseLabels = imdbExemplars.images.coarseLabels(perm);

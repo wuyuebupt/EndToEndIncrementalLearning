@@ -9,7 +9,7 @@ batchs = 100; % Number of classes per incremental step. Accepts array of sizes. 
 nIters = 1; % Number of iterations with different class order. Edit me!
 
 if ~exist('gpuId', 'var')
-    gpuId = 2; % Gpu to execute the training. Edit me!
+    gpuId = 1; % Gpu to execute the training. Edit me!
 end
 
 % Define opts.
